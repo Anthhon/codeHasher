@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>codeHasher</title>
+		<!--<link rel="stylesheet" href="style.css">-->
+	</head>
+	<body>
+		<section id="section">
+			<label id="label-code-field" for ="code-field">Put your code here:</label>
+			<input id="code-field" name="code-field" type="text">
+		</section>
+		<button id="button" type="button" onClick="generateLink()">Generate link!</button>
+
+		<!--<script src="index.js"></script>-->
+		<script>
+			// Functions used to code and decode content to/from URL
+			function encodeToBase64(text) {
+				return btoa(unescape(encodeURIComponent(text)));
+			}
+
+			function decodeFromBase64(base64) {
+				return decodeURIComponent(escape(atob(base64)));
+			}
+
+			function extractCodeFromURL() {
+				const url = window.location.href;
+				const prefix = "/paste/";
+				const startIndex = url.indexOf(prefix);
+				if (startIndex !== -1) {
+					return url.slice(startIndex + prefix.length);
+				}
+				return null; // Return null if no code is found in the URL
+			}
+
+			window.onload = function() {
+				const extractedCode = extractCodeFromURL();
+				if (extractedCode) {
+					// Exihibit extracted code
+					let inputCodeLabel = document.getElementById("label-code-field");
+					let codeField = document.getElementById("code-field");
+					let button = document.getElementById("button");
+
+					codeField.value = decodeFromBase64(extractedCode);
+					inputCodeLabel.hidden = true;
+					button.hidden = true;
+				}
+			};
+
+			function generateLink() {
+				// Get code from code-field
+				let inputCode = document.getElementById("code-field").value;
+				const encodedCode = encodeToBase64(inputCode);
+
+				// Create a new linkElement element with 'encodedCode' embedded inside link
+				var linkElement = document.createElement("p");
+				linkElement.textContent = `${window.location.href}paste/${encodedCode}`;
+
+				// Append the linkElement element to the section
+				var section = document.getElementById("section");
+				section.appendChild(linkElement);
+			}
+		</script>
+	</body>
+</html>
